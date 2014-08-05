@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(linux_utils)
+project(laptop_battery_monitor)
 
 find_package(catkin REQUIRED COMPONENTS diagnostic_msgs turtlebot_msgs)
 

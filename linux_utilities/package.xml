@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package>
+  <name>linux_utilities</name>
+  <version>0.0.0</version>
+  <description>
+     Simple scripts which help utilise, monitor, interact with computer
+     hardware abstracted by a linux OS.
+  </description>
+
+  <maintainer email="jihoonlee.in@com">Jihoon Lee</maintainer>
+  <license>BSD</license>
+
+  <url type="website">http://wiki.ros.org/linux_utilities</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>laptop_battery_monitor</run_depend>
+
+  <export>
+    <metapackage/> 
+  </export>
+</package>
