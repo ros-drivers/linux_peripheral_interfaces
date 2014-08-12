@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>linux_utilities</name>
+  <name>linux_peripheral_interfaces</name>
   <version>0.0.0</version>
   <description>
      Simple scripts which help utilise, monitor, interact with computer
@@ -10,7 +10,7 @@
   <maintainer email="jihoonlee.in@com">Jihoon Lee</maintainer>
   <license>BSD</license>
 
-  <url type="website">http://wiki.ros.org/linux_utilities</url>
+  <url type="website">http://wiki.ros.org/linux_peripheral_interfaces</url>
 
   <buildtool_depend>catkin</buildtool_depend>
   <run_depend>laptop_battery_monitor</run_depend>
