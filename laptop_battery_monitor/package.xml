@@ -9,16 +9,16 @@
   <author>Daniel Stonier</author>
   <license>BSD</license>
   <url type="website">http://ros.org/wiki/laptop_battery_monitor</url>
-  <!--<url type="repository">https://github.com/turtlebot/turtlebot</url>-->
-  <!--<url type="bugtracker">https://github.com/turtlebot/turtlebot/issues</url>-->
+  <url type="repository">https://github.com/ros-drivers/linux_peripheral_interfaces</url>
+  <url type="bugtracker">https://github.com/ros-drivers/linux_peripheral_interfaces/issues</url>
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>diagnostic_msgs </build_depend>
-  <build_depend>turtlebot_msgs </build_depend>
+  <build_depend>smart_battery_msgs</build_depend>
 
   <run_depend>rospy</run_depend>
   <run_depend>diagnostic_msgs</run_depend>
-  <run_depend>turtlebot_msgs</run_depend>
+  <run_depend>smart_battery_msgs</run_depend>
 </package>
 
 

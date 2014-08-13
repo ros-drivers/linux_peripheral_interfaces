@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(laptop_battery_monitor)
 
-find_package(catkin REQUIRED COMPONENTS diagnostic_msgs turtlebot_msgs)
+find_package(catkin REQUIRED COMPONENTS diagnostic_msgs smart_battery_msgs)
 
-catkin_package(CATKIN_DEPENDS turtlebot_msgs diagnostic_msgs)
+catkin_package(CATKIN_DEPENDS smart_battery_msgs diagnostic_msgs)
 
 install(
   PROGRAMS 

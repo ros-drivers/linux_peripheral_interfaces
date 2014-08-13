@@ -46,7 +46,7 @@ import rospy
 import os  # to check path existence
 import exceptions
 
-from turtlebot_msgs.msg import LaptopChargeStatus
+from smart_battery_msgs.msg import SmartBatteryStatus 
 from diagnostic_msgs.msg import DiagnosticStatus, DiagnosticArray, KeyValue
 
 def _strip_Ah(raw_val):
@@ -134,11 +134,11 @@ def _check_battery_info(_battery_acpi_path):
             raise NameError(_battery_acpi_path + '/charge_full || ' + _battery_acpi_path + '/energy_full does not exist')
     return (design_capacity, last_full_capacity)
 
-state_to_val = {'charged':     LaptopChargeStatus.CHARGED,
-                'full':        LaptopChargeStatus.CHARGED, 
-                'charging':    LaptopChargeStatus.CHARGING, 
-                'discharging': LaptopChargeStatus.DISCHARGING,
-                'unknown':     LaptopChargeStatus.CHARGING, }
+state_to_val = {'charged':     SmartBatteryStatus.CHARGED,
+                'full':        SmartBatteryStatus.CHARGED, 
+                'charging':    SmartBatteryStatus.CHARGING, 
+                'discharging': SmartBatteryStatus.DISCHARGING,
+                'unknown':     SmartBatteryStatus.CHARGING, }
 
 diag_level_to_msg = { DiagnosticStatus.OK:    'OK', 
                       DiagnosticStatus.WARN:  'Warning',
@@ -146,9 +146,9 @@ diag_level_to_msg = { DiagnosticStatus.OK:    'OK',
 
 def _check_battery_state(_battery_acpi_path):
     """
-    @return LaptopChargeStatus
+    @return SmartBatteryStatus
     """
-    rv = LaptopChargeStatus()
+    rv = SmartBatteryStatus()
 
     if _battery_acpi_path.startswith('/proc'):
 
@@ -162,7 +162,7 @@ def _check_battery_state(_battery_acpi_path):
         state = batt_info.get('charging state', 'discharging')
         rv.charge_state = state_to_val.get(state, 0)
         rv.rate     = _strip_A(batt_info.get('present rate',        '-1 mA'))
-        if rv.charge_state == LaptopChargeStatus.DISCHARGING:
+        if rv.charge_state == SmartBatteryStatus.DISCHARGING:
             rv.rate = math.copysign(rv.rate, -1) # Need to set discharging rate to negative
         
         rv.charge   = _strip_Ah(batt_info.get('remaining capacity', '-1 mAh')) # /energy_now
@@ -181,7 +181,7 @@ def _check_battery_state(_battery_acpi_path):
         else:
             rv.rate     = _read_number(_battery_acpi_path + '/current_now')/10e5
             
-        if rv.charge_state == LaptopChargeStatus.DISCHARGING:
+        if rv.charge_state == SmartBatteryStatus.DISCHARGING:
             rv.rate = math.copysign(rv.rate, -1) # Need to set discharging rate to negative
         
         if os.path.exists(_battery_acpi_path + '/energy_now'):
@@ -219,9 +219,9 @@ class LaptopBatteryMonitor(object):
 
         self._last_info_update  = 0
         self._last_state_update = 0
-        self._msg = LaptopChargeStatus()
+        self._msg = SmartBatteryStatus()
         
-        self._power_pub = rospy.Publisher('laptop_charge', LaptopChargeStatus, latch=True, queue_size=5)
+        self._power_pub = rospy.Publisher('laptop_charge', SmartBatteryStatus, latch=True, queue_size=5)
         self._diag_pub  = rospy.Publisher('/diagnostics', DiagnosticArray, queue_size=5)
         
         # Battery info
