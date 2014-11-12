@@ -43,6 +43,7 @@ import copy
 import yaml
 import math
 import rospy
+import socket
 import os  # to check path existence
 import exceptions
 
@@ -200,6 +201,7 @@ def _laptop_charge_to_diag(laptop_msg):
     rv.level   = DiagnosticStatus.OK
     rv.message = 'OK'
     rv.name    = 'Laptop Battery'
+    rv.hardware_id = socket.gethostname()
 
     if not laptop_msg.present:
         rv.level = DiagnosticStatus.ERROR
