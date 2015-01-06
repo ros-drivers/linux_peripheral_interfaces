@@ -1,0 +1,24 @@
+<package>
+  <name>libsensors_monitor</name>
+  <version>0.0.0</version>
+  <description>libsensors_monitor</description>
+  <author email="mwills@wpi.edu">Mitchell Wills</author>
+  <maintainer email="mwills@wpi.edu">Mitchell Wills</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">http://ros.org/wiki/libsensors_monitor</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>diagnostic_updater</build_depend>
+  <build_depend>libsensors4-dev</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>diagnostic_updater</run_depend>
+  <run_depend>libsensors4-dev</run_depend>
+
+  <export>
+  </export>
+</package>
