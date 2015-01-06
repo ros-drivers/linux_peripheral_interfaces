@@ -16,6 +16,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <run_depend>laptop_battery_monitor</run_depend>
+  <run_depend>libsensors_monitor</run_depend>
 
   <export>
     <metapackage/> 
