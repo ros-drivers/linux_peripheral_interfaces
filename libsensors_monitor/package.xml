@@ -1,6 +1,6 @@
 <package>
   <name>libsensors_monitor</name>
-  <version>0.0.0</version>
+  <version>0.1.1</version>
   <description>libsensors_monitor</description>
   <author email="mwills@wpi.edu">Mitchell Wills</author>
   <maintainer email="mwills@wpi.edu">Mitchell Wills</maintainer>
