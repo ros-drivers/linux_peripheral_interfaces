@@ -2,8 +2,8 @@
 Changelog for package libsensors_monitor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.2 (2015-01-06)
+------------------
 * Import libsensors_monitor node from diagnostic_common_diagnostics
 * Contributors: Mitchell Wills
 
