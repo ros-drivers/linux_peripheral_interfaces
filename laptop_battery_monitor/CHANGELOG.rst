@@ -2,6 +2,9 @@
 Changelog for package laptop_battery_monitor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.1.1 (2014-11-18)
 ------------------
 * Added using hostname as diagnostic hardware id for laptop battery monitor
