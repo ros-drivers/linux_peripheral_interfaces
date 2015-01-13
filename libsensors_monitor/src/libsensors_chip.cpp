@@ -194,27 +194,27 @@ void TempSensor::buildStatus(diagnostic_updater::DiagnosticStatusWrapper &stat){
   SensorChipSubFeaturePtr temp_crit_alarm = getSubFeatureByType(SENSORS_SUBFEATURE_TEMP_CRIT_ALARM);
   if(temp){
     double temp_val = temp->getValue();
-    stat.add("Temperature (\xB0""C)", temp_val);
+    stat.add("Temperature (\xC2\xB0""C)", temp_val);
 
     if(max_temp && max_temp->getValue()!=0)
-      stat.add("Max Temperature (\xB0""C)", max_temp->getValue());
+      stat.add("Max Temperature (\xC2\xB0""C)", max_temp->getValue());
     if(temp_crit && temp_crit->getValue()!=0)
-      stat.add("Temperature Critical (\xB0""C)", temp_crit->getValue());
+      stat.add("Temperature Critical (\xC2\xB0""C)", temp_crit->getValue());
 
     if(temp_crit_alarm && temp_crit_alarm->getValue()!=0)
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Critical Temp Alarm (%.2f\xB0""C)", temp_val);
+          "Critical Temp Alarm (%.2f\xC2\xB0""C)", temp_val);
     else if(temp_crit && temp_crit->getValue()!=0 &&
         temp_val > temp_crit->getValue())
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Critical Temp Alarm (%.2f\xB0""C)", temp_val);
+          "Critical Temp Alarm (%.2f\xC2\xB0""C)", temp_val);
     else if(max_temp && max_temp->getValue()!=0 &&
         temp_val > max_temp->getValue())
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Max Temp Alarm (%.2f\xB0""C)", temp_val);
+          "Max Temp Alarm (%.2f\xC2\xB0""C)", temp_val);
     else
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::OK,
-          "Temp OK (%.2f\xB0""C)", temp_val);
+          "Temp OK (%.2f\xC2\xB0""C)", temp_val);
   }
   else
     stat.summary(diagnostic_msgs::DiagnosticStatus::ERROR, "NO TEMP Input!!!");
