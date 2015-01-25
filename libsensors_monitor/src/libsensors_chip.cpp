@@ -42,6 +42,7 @@
 #include <ros/ros.h>
 #include <boost/foreach.hpp>
 #include <libsensors_monitor/libsensors_chip.h>
+#include <sstream>
 
 #define NAME_BUFFER_SIZE 250
 
@@ -169,6 +170,12 @@ double SensorChipSubFeature::getValue(){
   return value;
 }
 
+static std::string appendUnit(double value, const std::string& unit) {
+  std::stringstream ss;
+  ss << value << unit;
+  return ss.str();
+}
+
 
 void FanSensor::buildStatus(diagnostic_updater::DiagnosticStatusWrapper &stat){
   SensorChipSubFeaturePtr speed = getSubFeatureByType(SENSORS_SUBFEATURE_FAN_INPUT);
@@ -194,12 +201,12 @@ void TempSensor::buildStatus(diagnostic_updater::DiagnosticStatusWrapper &stat){
   SensorChipSubFeaturePtr temp_crit_alarm = getSubFeatureByType(SENSORS_SUBFEATURE_TEMP_CRIT_ALARM);
   if(temp){
     double temp_val = temp->getValue();
-    stat.add("Temperature (\xC2\xB0""C)", temp_val);
+    stat.add("Temperature", appendUnit(temp_val, "\xC2\xB0""C"));
 
     if(max_temp && max_temp->getValue()!=0)
-      stat.add("Max Temperature (\xC2\xB0""C)", max_temp->getValue());
+      stat.add("Max Temperature", appendUnit(max_temp->getValue(), "\xC2\xB0""C"));
     if(temp_crit && temp_crit->getValue()!=0)
-      stat.add("Temperature Critical (\xC2\xB0""C)", temp_crit->getValue());
+      stat.add("Temperature Critical", appendUnit(temp_crit->getValue(), "\xC2\xB0""C"));
 
     if(temp_crit_alarm && temp_crit_alarm->getValue()!=0)
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
@@ -246,7 +253,7 @@ void VoltageSensor::buildStatus(diagnostic_updater::DiagnosticStatusWrapper &sta
 
   if(voltage){
     double voltage_val = voltage->getValue();
-    stat.add("Voltage (V)", voltage_val);
+    stat.add("Voltage", appendUnit(voltage_val, "V"));
 
     bool low_warn = false;
     bool low_err = false;
@@ -255,7 +262,7 @@ void VoltageSensor::buildStatus(diagnostic_updater::DiagnosticStatusWrapper &sta
 
     // max voltage (warning)
     if(max) {
-      stat.add("Max Voltage (V)", max->getValue());
+      stat.add("Max Voltage", appendUnit(max->getValue(), "V"));
       if(max_alarm && max_alarm->getValue()!=0) {
         high_warn = true;
       } else if(voltage_val >= max->getValue()) {
@@ -265,7 +272,7 @@ void VoltageSensor::buildStatus(diagnostic_updater::DiagnosticStatusWrapper &sta
 
     // min voltage (warning)
     if(min) {
-      stat.add("Min Voltage (V)", min->getValue());
+      stat.add("Min Voltage", appendUnit(min->getValue(), "V"));
       if(min_alarm && min_alarm->getValue()!=0) {
         low_warn = true;
       } else if(voltage_val <= min->getValue()) {
@@ -274,7 +281,7 @@ void VoltageSensor::buildStatus(diagnostic_updater::DiagnosticStatusWrapper &sta
     }
 
     if(crit) {
-      stat.add("Critical Max Voltage (V)", crit->getValue());
+      stat.add("Critical Max Voltage", appendUnit(crit->getValue(), "V"));
       if(crit_alarm && crit_alarm->getValue()!=0) {
         high_err = true;
       } else if(voltage_val >= crit->getValue()) {
@@ -283,7 +290,7 @@ void VoltageSensor::buildStatus(diagnostic_updater::DiagnosticStatusWrapper &sta
     }
 
     if(lcrit) {
-      stat.add("Critical Min Voltage (V)", lcrit->getValue());
+      stat.add("Critical Min Voltage", appendUnit(lcrit->getValue(), "V"));
       if(lcrit_alarm && lcrit_alarm->getValue()!=0) {
         low_err = true;
       } else if(voltage_val <= lcrit->getValue()) {
