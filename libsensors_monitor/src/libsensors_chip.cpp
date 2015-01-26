@@ -79,8 +79,8 @@ SensorChip::SensorChip(sensors_chip_name const *chip_name,
     }
 
     if( std::count(ignore.begin(), ignore.end(),
-          feature_ptr->getSensorName()) > 0 ) {
-      ROS_INFO_STREAM("Ignoring sensor " << feature_ptr->getSensorName());
+          feature_ptr->getFullName()) > 0 ) {
+      ROS_INFO_STREAM("Ignoring sensor " << feature_ptr->getFullName());
     } else {
       features_.push_back(feature_ptr);
     }
@@ -93,7 +93,7 @@ SensorChip::SensorChip(sensors_chip_name const *chip_name,
     size_t remain = features_.size();
     BOOST_FOREACH(const SensorChipFeaturePtr & feature, features_) {
       remain--;
-      info_msg << feature->getName();
+      info_msg << feature->getFeatureName();
       if( remain > 0 ) info_msg << ", ";
     }
   } else {
@@ -118,11 +118,12 @@ SensorChipFeature::SensorChipFeature(const SensorChip& chip,
     label_ = label_c_str;
     free(label_c_str);
   }
-  sensor_name_ = getChipName()+"/"+getName();
+  full_name_ = getChipName()+"/"+getFeatureName();
+  full_label_ = getChipName()+"/"+getFeatureLabel();
 
 
-  ROS_DEBUG("\tFound Feature: %s(%s)[%d]", getLabel().c_str(),
-      getName().c_str(), feature_->type);
+  ROS_DEBUG("\tFound Feature: %s(%s)[%d]", getFullLabel().c_str(),
+      getFullName().c_str(), feature_->type);
 
   enumerate_subfeatures();
 }
@@ -164,7 +165,7 @@ double SensorChipSubFeature::getValue(){
   double value;
   if( sensors_get_value(feature_.chip_.internal_name_, subfeature_->number,
         &value) != 0 ) {
-    ROS_WARN_STREAM("Failed to get value for " << feature_.getSensorName() <<
+    ROS_WARN_STREAM("Failed to get value for " << feature_.getFullName() <<
         " " << getName());
   }
   return value;
