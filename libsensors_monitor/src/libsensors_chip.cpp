@@ -171,13 +171,6 @@ double SensorChipSubFeature::getValue(){
   return value;
 }
 
-static std::string appendUnit(double value, const std::string& unit) {
-  std::stringstream ss;
-  ss << value << unit;
-  return ss.str();
-}
-
-
 void FanSensor::buildStatus(diagnostic_updater::DiagnosticStatusWrapper &stat){
   SensorChipSubFeaturePtr speed = getSubFeatureByType(SENSORS_SUBFEATURE_FAN_INPUT);
   if(speed){
@@ -202,27 +195,27 @@ void TempSensor::buildStatus(diagnostic_updater::DiagnosticStatusWrapper &stat){
   SensorChipSubFeaturePtr temp_crit_alarm = getSubFeatureByType(SENSORS_SUBFEATURE_TEMP_CRIT_ALARM);
   if(temp){
     double temp_val = temp->getValue();
-    stat.add("Temperature", appendUnit(temp_val, "\xC2\xB0""C"));
+    stat.add("Temperature (C)", temp_val);
 
     if(max_temp && max_temp->getValue()!=0)
-      stat.add("Max Temperature", appendUnit(max_temp->getValue(), "\xC2\xB0""C"));
+      stat.add("Max Temperature (C)", max_temp->getValue());
     if(temp_crit && temp_crit->getValue()!=0)
-      stat.add("Temperature Critical", appendUnit(temp_crit->getValue(), "\xC2\xB0""C"));
+      stat.add("Temperature Critical (C)", temp_crit->getValue());
 
     if(temp_crit_alarm && temp_crit_alarm->getValue()!=0)
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Critical Temp Alarm (%.2f\xC2\xB0""C)", temp_val);
+          "Critical Temp Alarm (%.2f C)", temp_val);
     else if(temp_crit && temp_crit->getValue()!=0 &&
         temp_val > temp_crit->getValue())
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Critical Temp Alarm (%.2f\xC2\xB0""C)", temp_val);
+          "Critical Temp Alarm (%.2f C)", temp_val);
     else if(max_temp && max_temp->getValue()!=0 &&
         temp_val > max_temp->getValue())
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Max Temp Alarm (%.2f\xC2\xB0""C)", temp_val);
+          "Max Temp Alarm (%.2f C)", temp_val);
     else
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::OK,
-          "Temp OK (%.2f\xC2\xB0""C)", temp_val);
+          "Temp OK (%.2f C)", temp_val);
   }
   else
     stat.summary(diagnostic_msgs::DiagnosticStatus::ERROR, "NO TEMP Input!!!");
@@ -254,7 +247,7 @@ void VoltageSensor::buildStatus(diagnostic_updater::DiagnosticStatusWrapper &sta
 
   if(voltage){
     double voltage_val = voltage->getValue();
-    stat.add("Voltage", appendUnit(voltage_val, "V"));
+    stat.add("Voltage (V)", voltage_val);
 
     bool low_warn = false;
     bool low_err = false;
@@ -263,7 +256,7 @@ void VoltageSensor::buildStatus(diagnostic_updater::DiagnosticStatusWrapper &sta
 
     // max voltage (warning)
     if(max) {
-      stat.add("Max Voltage", appendUnit(max->getValue(), "V"));
+      stat.add("Max Voltage (V)", max->getValue());
       if(max_alarm && max_alarm->getValue()!=0) {
         high_warn = true;
       } else if(voltage_val >= max->getValue()) {
@@ -273,7 +266,7 @@ void VoltageSensor::buildStatus(diagnostic_updater::DiagnosticStatusWrapper &sta
 
     // min voltage (warning)
     if(min) {
-      stat.add("Min Voltage", appendUnit(min->getValue(), "V"));
+      stat.add("Min Voltage (V)", min->getValue());
       if(min_alarm && min_alarm->getValue()!=0) {
         low_warn = true;
       } else if(voltage_val <= min->getValue()) {
@@ -282,7 +275,7 @@ void VoltageSensor::buildStatus(diagnostic_updater::DiagnosticStatusWrapper &sta
     }
 
     if(crit) {
-      stat.add("Critical Max Voltage", appendUnit(crit->getValue(), "V"));
+      stat.add("Critical Max Voltage (V)", crit->getValue());
       if(crit_alarm && crit_alarm->getValue()!=0) {
         high_err = true;
       } else if(voltage_val >= crit->getValue()) {
@@ -291,7 +284,7 @@ void VoltageSensor::buildStatus(diagnostic_updater::DiagnosticStatusWrapper &sta
     }
 
     if(lcrit) {
-      stat.add("Critical Min Voltage", appendUnit(lcrit->getValue(), "V"));
+      stat.add("Critical Min Voltage (V)", lcrit->getValue());
       if(lcrit_alarm && lcrit_alarm->getValue()!=0) {
         low_err = true;
       } else if(voltage_val <= lcrit->getValue()) {
@@ -302,19 +295,19 @@ void VoltageSensor::buildStatus(diagnostic_updater::DiagnosticStatusWrapper &sta
     // check for alarms and set summary
     if(high_err) {
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
-          "High Voltage CRITICAL (%.2fV)", voltage_val);
+          "High Voltage CRITICAL (%.2f V)", voltage_val);
     } else if(low_err) {
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
-          "Low Voltage CRITICAL (%.2fV)", voltage_val);
+          "Low Voltage CRITICAL (%.2f V)", voltage_val);
     } else if(high_warn) {
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "High Voltage ALARM (%.2fV)", voltage_val);
+          "High Voltage ALARM (%.2f V)", voltage_val);
     } else if(low_warn) {
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Low Voltage ALARM (%.2fV)", voltage_val);
+          "Low Voltage ALARM (%.2f V)", voltage_val);
     } else {
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::OK,
-          "Voltage OK (%.2fV)", voltage_val);
+          "Voltage OK (%.2f V)", voltage_val);
     }
   } else {
     stat.summary(diagnostic_msgs::DiagnosticStatus::ERROR,
