@@ -111,7 +111,7 @@ int main(int argc, char** argv){
   // Add each sensor to the diagnostic updater
   BOOST_FOREACH(SensorChipPtr sensor_chip, sensor_chips_){
     BOOST_FOREACH(SensorChipFeaturePtr sensor, sensor_chip->features_){
-      updater.add(sensor->getSensorName(), boost::bind(&SensorChipFeature::buildStatus, sensor, _1));
+      updater.add(sensor->getFullLabel(), boost::bind(&SensorChipFeature::buildStatus, sensor, _1));
     }
   }
 

@@ -42,6 +42,7 @@
 #include <ros/ros.h>
 #include <boost/foreach.hpp>
 #include <libsensors_monitor/libsensors_chip.h>
+#include <sstream>
 
 #define NAME_BUFFER_SIZE 250
 
@@ -78,8 +79,8 @@ SensorChip::SensorChip(sensors_chip_name const *chip_name,
     }
 
     if( std::count(ignore.begin(), ignore.end(),
-          feature_ptr->getSensorName()) > 0 ) {
-      ROS_INFO_STREAM("Ignoring sensor " << feature_ptr->getSensorName());
+          feature_ptr->getFullName()) > 0 ) {
+      ROS_INFO_STREAM("Ignoring sensor " << feature_ptr->getFullName());
     } else {
       features_.push_back(feature_ptr);
     }
@@ -92,7 +93,7 @@ SensorChip::SensorChip(sensors_chip_name const *chip_name,
     size_t remain = features_.size();
     BOOST_FOREACH(const SensorChipFeaturePtr & feature, features_) {
       remain--;
-      info_msg << feature->getName();
+      info_msg << feature->getFeatureName();
       if( remain > 0 ) info_msg << ", ";
     }
   } else {
@@ -117,11 +118,12 @@ SensorChipFeature::SensorChipFeature(const SensorChip& chip,
     label_ = label_c_str;
     free(label_c_str);
   }
-  sensor_name_ = getChipName()+"/"+getName();
+  full_name_ = getChipName()+"/"+getFeatureName();
+  full_label_ = getChipName()+"/"+getFeatureLabel();
 
 
-  ROS_DEBUG("\tFound Feature: %s(%s)[%d]", getLabel().c_str(),
-      getName().c_str(), feature_->type);
+  ROS_DEBUG("\tFound Feature: %s(%s)[%d]", getFullLabel().c_str(),
+      getFullName().c_str(), feature_->type);
 
   enumerate_subfeatures();
 }
@@ -163,12 +165,11 @@ double SensorChipSubFeature::getValue(){
   double value;
   if( sensors_get_value(feature_.chip_.internal_name_, subfeature_->number,
         &value) != 0 ) {
-    ROS_WARN_STREAM("Failed to get value for " << feature_.getSensorName() <<
+    ROS_WARN_STREAM("Failed to get value for " << feature_.getFullName() <<
         " " << getName());
   }
   return value;
 }
-
 
 void FanSensor::buildStatus(diagnostic_updater::DiagnosticStatusWrapper &stat){
   SensorChipSubFeaturePtr speed = getSubFeatureByType(SENSORS_SUBFEATURE_FAN_INPUT);
@@ -194,27 +195,27 @@ void TempSensor::buildStatus(diagnostic_updater::DiagnosticStatusWrapper &stat){
   SensorChipSubFeaturePtr temp_crit_alarm = getSubFeatureByType(SENSORS_SUBFEATURE_TEMP_CRIT_ALARM);
   if(temp){
     double temp_val = temp->getValue();
-    stat.add("Temperature (\xB0""C)", temp_val);
+    stat.add("Temperature (C)", temp_val);
 
     if(max_temp && max_temp->getValue()!=0)
-      stat.add("Max Temperature (\xB0""C)", max_temp->getValue());
+      stat.add("Max Temperature (C)", max_temp->getValue());
     if(temp_crit && temp_crit->getValue()!=0)
-      stat.add("Temperature Critical (\xB0""C)", temp_crit->getValue());
+      stat.add("Temperature Critical (C)", temp_crit->getValue());
 
     if(temp_crit_alarm && temp_crit_alarm->getValue()!=0)
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Critical Temp Alarm (%.2f\xB0""C)", temp_val);
+          "Critical Temp Alarm (%.2f C)", temp_val);
     else if(temp_crit && temp_crit->getValue()!=0 &&
         temp_val > temp_crit->getValue())
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Critical Temp Alarm (%.2f\xB0""C)", temp_val);
+          "Critical Temp Alarm (%.2f C)", temp_val);
     else if(max_temp && max_temp->getValue()!=0 &&
         temp_val > max_temp->getValue())
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Max Temp Alarm (%.2f\xB0""C)", temp_val);
+          "Max Temp Alarm (%.2f C)", temp_val);
     else
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::OK,
-          "Temp OK (%.2f\xB0""C)", temp_val);
+          "Temp OK (%.2f C)", temp_val);
   }
   else
     stat.summary(diagnostic_msgs::DiagnosticStatus::ERROR, "NO TEMP Input!!!");
@@ -294,19 +295,19 @@ void VoltageSensor::buildStatus(diagnostic_updater::DiagnosticStatusWrapper &sta
     // check for alarms and set summary
     if(high_err) {
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
-          "High Voltage CRITICAL (%.2fV)", voltage_val);
+          "High Voltage CRITICAL (%.2f V)", voltage_val);
     } else if(low_err) {
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::ERROR,
-          "Low Voltage CRITICAL (%.2fV)", voltage_val);
+          "Low Voltage CRITICAL (%.2f V)", voltage_val);
     } else if(high_warn) {
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "High Voltage ALARM (%.2fV)", voltage_val);
+          "High Voltage ALARM (%.2f V)", voltage_val);
     } else if(low_warn) {
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::WARN,
-          "Low Voltage ALARM (%.2fV)", voltage_val);
+          "Low Voltage ALARM (%.2f V)", voltage_val);
     } else {
       stat.summaryf(diagnostic_msgs::DiagnosticStatus::OK,
-          "Voltage OK (%.2fV)", voltage_val);
+          "Voltage OK (%.2f V)", voltage_val);
     }
   } else {
     stat.summary(diagnostic_msgs::DiagnosticStatus::ERROR,

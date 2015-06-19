@@ -81,7 +81,8 @@ class SensorChipFeature {
 private:
   std::string name_;
   std::string label_;
-  std::string sensor_name_;
+  std::string full_name_;
+  std::string full_label_;
   const SensorChip& chip_;
   sensors_feature const *feature_;
   void enumerate_subfeatures();
@@ -91,9 +92,10 @@ public:
   SensorChipFeature(const SensorChip& chip, sensors_feature const *feature);
   SensorChipSubFeaturePtr getSubFeatureByType(sensors_subfeature_type type);
 
-  const std::string &getName() const {return name_;};
-  const std::string &getLabel() const {return label_;};
-  const std::string &getSensorName() const {return sensor_name_;};
+  const std::string &getFeatureName() const {return name_;};
+  const std::string &getFeatureLabel() const {return label_;};
+  const std::string &getFullName() const {return full_name_;};
+  const std::string &getFullLabel() const {return full_label_;};
   sensors_feature_type getType(){return feature_->type;};
   std::string getChipName(){return chip_.getName();};
 
