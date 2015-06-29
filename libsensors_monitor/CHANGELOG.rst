@@ -2,8 +2,8 @@
 Changelog for package libsensors_monitor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.3 (2015-06-29)
+------------------
 * Made labels match format in laptop_battery_monitor
   Removed degree symbols from temps
 * Now use the sensor label for diangostics name
