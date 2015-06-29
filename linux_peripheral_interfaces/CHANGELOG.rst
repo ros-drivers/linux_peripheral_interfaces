@@ -2,6 +2,9 @@
 Changelog for package linux_peripheral_interfaces
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.1.2 (2015-01-06)
 ------------------
 * add libsensors_monitor in metapackage `#4 <https://github.com/ros-drivers/linux_peripheral_interfaces/issues/4>`_

@@ -2,6 +2,16 @@
 Changelog for package libsensors_monitor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Made labels match format in laptop_battery_monitor
+  Removed degree symbols from temps
+* Now use the sensor label for diangostics name
+* in libsensors monitor now put unit in the value instead of in the key
+* Added a package description
+* switch to using utf-8 for degree symbol for libsensors_monitor
+* Contributors: Mitchell Wills
+
 0.1.2 (2015-01-06)
 ------------------
 * Import libsensors_monitor node from diagnostic_common_diagnostics

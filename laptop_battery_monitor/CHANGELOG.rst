@@ -2,6 +2,9 @@
 Changelog for package laptop_battery_monitor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.1.2 (2015-01-06)
 ------------------
 
