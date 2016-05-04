@@ -14,11 +14,9 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>diagnostic_msgs </build_depend>
-  <build_depend>smart_battery_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
 
   <run_depend>rospy</run_depend>
   <run_depend>diagnostic_msgs</run_depend>
-  <run_depend>smart_battery_msgs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
 </package>
-
-
