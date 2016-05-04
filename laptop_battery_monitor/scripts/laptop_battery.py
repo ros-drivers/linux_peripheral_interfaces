@@ -47,7 +47,7 @@ import socket
 import os  # to check path existence
 import exceptions
 
-from smart_battery_msgs.msg import SmartBatteryStatus 
+from sensor_msgs.msg import BatteryState 
 from diagnostic_msgs.msg import DiagnosticStatus, DiagnosticArray, KeyValue
 
 def _strip_Ah(raw_val):
@@ -135,11 +135,11 @@ def _check_battery_info(_battery_acpi_path):
             raise NameError(_battery_acpi_path + '/charge_full || ' + _battery_acpi_path + '/energy_full does not exist')
     return (design_capacity, last_full_capacity)
 
-state_to_val = {'charged':     SmartBatteryStatus.CHARGED,
-                'full':        SmartBatteryStatus.CHARGED, 
-                'charging':    SmartBatteryStatus.CHARGING, 
-                'discharging': SmartBatteryStatus.DISCHARGING,
-                'unknown':     SmartBatteryStatus.CHARGING, }
+state_to_val = {'charged':     BatteryState.POWER_SUPPLY_STATUS_FULL,
+                'full':        BatteryState.POWER_SUPPLY_STATUS_FULL, 
+                'charging':    BatteryState.POWER_SUPPLY_STATUS_CHARGING, 
+                'discharging': BatteryState.POWER_SUPPLY_STATUS_DISCHARGING,
+                'unknown':     BatteryState.POWER_SUPPLY_STATUS_UNKNOWN, }
 
 diag_level_to_msg = { DiagnosticStatus.OK:    'OK', 
                       DiagnosticStatus.WARN:  'Warning',
@@ -147,9 +147,9 @@ diag_level_to_msg = { DiagnosticStatus.OK:    'OK',
 
 def _check_battery_state(_battery_acpi_path):
     """
-    @return SmartBatteryStatus
+    @return BatteryState
     """
-    rv = SmartBatteryStatus()
+    rv = BatteryState()
 
     if _battery_acpi_path.startswith('/proc'):
 
@@ -161,34 +161,35 @@ def _check_battery_state(_battery_acpi_path):
         batt_info = yaml.load(o)
 
         state = batt_info.get('charging state', 'discharging')
-        rv.charge_state = state_to_val.get(state, 0)
-        rv.rate     = _strip_A(batt_info.get('present rate',        '-1 mA'))
-        if rv.charge_state == SmartBatteryStatus.DISCHARGING:
-            rv.rate = math.copysign(rv.rate, -1) # Need to set discharging rate to negative
+        rv.power_supply_status = state_to_val.get(state, 0)
+        rv.current = _strip_A(batt_info.get('present rate',        '-1 mA'))
+        if rv.power_supply_status == BatteryState.POWER_SUPPLY_STATUS_DISCHARGING:
+            rv.current = math.copysign(rv.current, -1) # Need to set discharging rate to negative
         
-        rv.charge   = _strip_Ah(batt_info.get('remaining capacity', '-1 mAh')) # /energy_now
-        rv.voltage  = _strip_V(batt_info.get('present voltage',     '-1 mV')) # /voltage_now
-        rv.present  = batt_info.get('present', False) # /present
+        rv.charge = _strip_Ah(batt_info.get('remaining capacity', '-1 mAh')) # /energy_now
+        rv.voltage = _strip_V(batt_info.get('present voltage',     '-1 mV')) # /voltage_now
+        rv.present = batt_info.get('present', False) # /present
 
         rv.header.stamp = rospy.get_rostime()
     else:
 
         # Charging state; make lowercase and remove trailing eol
         state = _read_string(_battery_acpi_path+'/status', 'discharging').lower().rstrip()
-        rv.charge_state = state_to_val.get(state, 0)
+        rv.power_supply_status = state_to_val.get(state, 0)
         
         if os.path.exists(_battery_acpi_path + '/power_now'):
-            rv.rate     = _read_number(_battery_acpi_path + '/power_now')/10e5
+            rv.current = _read_number(_battery_acpi_path + '/power_now')/10e5 / \
+                           _read_number(_battery_acpi_path + '/voltage_now')
         else:
-            rv.rate     = _read_number(_battery_acpi_path + '/current_now')/10e5
+            rv.current = _read_number(_battery_acpi_path + '/current_now')/10e5
             
-        if rv.charge_state == SmartBatteryStatus.DISCHARGING:
-            rv.rate = math.copysign(rv.rate, -1) # Need to set discharging rate to negative
+        if rv.power_supply_status == BatteryState.POWER_SUPPLY_STATUS_DISCHARGING:
+            rv.current = math.copysign(rv.current, -1) # Need to set discharging rate to negative
         
         if os.path.exists(_battery_acpi_path + '/energy_now'):
-            rv.charge   = _read_number(_battery_acpi_path + '/energy_now')/10e5
+            rv.charge = _read_number(_battery_acpi_path + '/energy_now')/10e5
         else:
-            rv.charge   = _read_number(_battery_acpi_path + '/charge_now')/10e5
+            rv.charge = _read_number(_battery_acpi_path + '/charge_now')/10e5
         
         rv.voltage  = _read_number(_battery_acpi_path + '/voltage_now')/10e5
         rv.present  = _read_number(_battery_acpi_path + '/present') == 1
@@ -208,7 +209,7 @@ def _laptop_charge_to_diag(laptop_msg):
         rv.message = 'Laptop battery missing'
 
     rv.values.append(KeyValue('Voltage (V)',          str(laptop_msg.voltage)))
-    rv.values.append(KeyValue('Current (A)',          str(laptop_msg.rate)))
+    rv.values.append(KeyValue('Current (A)',          str(laptop_msg.current)))
     rv.values.append(KeyValue('Charge (Ah)',          str(laptop_msg.charge)))
     rv.values.append(KeyValue('Capacity (Ah)',        str(laptop_msg.capacity)))
     rv.values.append(KeyValue('Design Capacity (Ah)', str(laptop_msg.design_capacity)))
@@ -221,9 +222,9 @@ class LaptopBatteryMonitor(object):
 
         self._last_info_update  = 0
         self._last_state_update = 0
-        self._msg = SmartBatteryStatus()
+        self._msg = BatteryState()
         
-        self._power_pub = rospy.Publisher('laptop_charge', SmartBatteryStatus, latch=True, queue_size=5)
+        self._power_pub = rospy.Publisher('laptop_charge', BatteryState, latch=True, queue_size=5)
         self._diag_pub  = rospy.Publisher('/diagnostics', DiagnosticArray, queue_size=5)
         
         # Battery info
@@ -313,4 +314,3 @@ if __name__ == '__main__':
     except Exception:
         import traceback
         traceback.print_exc()
-
