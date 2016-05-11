@@ -2,11 +2,9 @@
 Changelog for package laptop_battery_monitor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-0.1.3 (2015-06-29)
+0.1.4 (2016-05-11)
 ------------------
-
-0.1.2 (2015-01-06)
-------------------
+* Switch to the new sensor_msgs/BatteryState message
 
 0.1.1 (2014-11-18)
 ------------------
