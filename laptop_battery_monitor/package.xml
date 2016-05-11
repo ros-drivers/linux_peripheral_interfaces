@@ -1,6 +1,6 @@
 <package>
   <name>laptop_battery_monitor</name>
-  <version>0.1.4</version>
+  <version>0.2.0</version>
 
   <description>
     Simple script to check battery status

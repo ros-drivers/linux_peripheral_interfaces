@@ -1,6 +1,6 @@
 <package>
   <name>libsensors_monitor</name>
-  <version>0.1.4</version>
+  <version>0.2.0</version>
   <description>A ROS node for using libsensors to provide diagnostics information about the sensors on a computer system.</description>
   <author email="mwills@wpi.edu">Mitchell Wills</author>
   <maintainer email="mwills@wpi.edu">Mitchell Wills</maintainer>
