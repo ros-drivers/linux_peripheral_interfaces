@@ -178,8 +178,11 @@ def _check_battery_state(_battery_acpi_path):
         rv.power_supply_status = state_to_val.get(state, 0)
         
         if os.path.exists(_battery_acpi_path + '/power_now'):
-            rv.current = _read_number(_battery_acpi_path + '/power_now')/10e5 / \
+            try:
+                rv.current = _read_number(_battery_acpi_path + '/power_now')/10e5 / \
                            _read_number(_battery_acpi_path + '/voltage_now')
+            except IOError:
+                rv.current = 0
         else:
             rv.current = _read_number(_battery_acpi_path + '/current_now')/10e5
             
