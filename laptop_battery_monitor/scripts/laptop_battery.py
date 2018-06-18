@@ -213,6 +213,7 @@ def _laptop_charge_to_diag(laptop_msg):
     rv.values.append(KeyValue('Charge (Ah)',          str(laptop_msg.charge)))
     rv.values.append(KeyValue('Capacity (Ah)',        str(laptop_msg.capacity)))
     rv.values.append(KeyValue('Design Capacity (Ah)', str(laptop_msg.design_capacity)))
+    rv.values.append(KeyValue('Percentage (%)',       str(laptop_msg.percentage)))
 
     return rv
 
