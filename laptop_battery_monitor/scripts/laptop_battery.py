@@ -141,6 +141,11 @@ state_to_val = {'charged':     BatteryState.POWER_SUPPLY_STATUS_FULL,
                 'discharging': BatteryState.POWER_SUPPLY_STATUS_DISCHARGING,
                 'unknown':     BatteryState.POWER_SUPPLY_STATUS_UNKNOWN, }
 
+val_to_state = {BatteryState.POWER_SUPPLY_STATUS_FULL:          'charged',
+                BatteryState.POWER_SUPPLY_STATUS_CHARGING:      'charging',
+                BatteryState.POWER_SUPPLY_STATUS_DISCHARGING:   'discharging',
+                BatteryState.POWER_SUPPLY_STATUS_UNKNOWN:       'unknown', }
+
 diag_level_to_msg = { DiagnosticStatus.OK:    'OK', 
                       DiagnosticStatus.WARN:  'Warning',
                       DiagnosticStatus.ERROR: 'Error'    }
@@ -214,6 +219,7 @@ def _laptop_charge_to_diag(laptop_msg):
     rv.values.append(KeyValue('Capacity (Ah)',        str(laptop_msg.capacity)))
     rv.values.append(KeyValue('Design Capacity (Ah)', str(laptop_msg.design_capacity)))
     rv.values.append(KeyValue('Percentage (%)',       str(laptop_msg.percentage)))
+    rv.values.append(KeyValue('Charging state',       val_to_state[laptop_msg.power_supply_status]))
 
     return rv
 
