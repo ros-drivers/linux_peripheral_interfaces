@@ -7,7 +7,7 @@
      hardware abstracted by a linux OS.
   </description>
 
-  <maintainer email="jihoonlee.in@gmail.com">Jihoon Lee</maintainer>
+  <maintainer email="ros-orphaned-packages@googlegroups.com">ROS Orphaned Package Maintainers</maintainer>
   <license>BSD</license>
 
   <url type="website">http://wiki.ros.org/linux_peripheral_interfaces</url>

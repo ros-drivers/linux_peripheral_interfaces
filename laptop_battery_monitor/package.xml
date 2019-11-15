@@ -5,7 +5,7 @@
   <description>
     Simple script to check battery status
   </description>
-  <maintainer email="d.stonier@gmail.com">Daniel Stonier</maintainer>
+  <maintainer email="ros-orphaned-packages@googlegroups.com">ROS Orphaned Package Maintainers</maintainer>
   <author>Daniel Stonier</author>
   <license>BSD</license>
   <url type="website">http://ros.org/wiki/laptop_battery_monitor</url>
