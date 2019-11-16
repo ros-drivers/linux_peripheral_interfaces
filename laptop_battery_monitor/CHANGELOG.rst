@@ -2,8 +2,8 @@
 Changelog for package laptop_battery_monitor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.1 (2019-11-16)
+------------------
 * Merge pull request `#10 <https://github.com/ros-drivers/linux_peripheral_interfaces/issues/10>`_ from kdhansen/kinetic
   Fix for systems without a power_now file when unplugged.
 * Merge pull request `#12 <https://github.com/ros-drivers/linux_peripheral_interfaces/issues/12>`_ from ernestmc/add_batt_diag

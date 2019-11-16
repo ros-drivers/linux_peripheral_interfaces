@@ -2,8 +2,8 @@
 Changelog for package linux_peripheral_interfaces
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.1 (2019-11-16)
+------------------
 * Merge branch 'kinetic' into add_batt_diag
 * Merge pull request `#15 <https://github.com/ros-drivers/linux_peripheral_interfaces/issues/15>`_ from k-okada/fix_maintaner
   Change maintainer to ROS Orphaned Package Maintainers
