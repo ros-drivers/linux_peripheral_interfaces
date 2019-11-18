@@ -1,0 +1,76 @@
+#!/usr/bin/env python
+#
+# Copyright (c) 2019, Eurotec, Netherlands
+# All rights reserved.
+#
+# \author Rein Appeldoorn
+
+import rospy
+from diagnostic_msgs.msg import DiagnosticStatus
+from diagnostic_updater import DiagnosticTask, Updater
+
+from wireless_monitor.wireless import get_iwconfig_dict_and_link_quality, get_wifi_ifname, NetCount
+
+
+class WirelessTask(DiagnosticTask):
+    def __init__(self, interface, link_quality_warning_percentage):
+        DiagnosticTask.__init__(self, "Wireless Information")
+        self._interface = interface
+        self._link_quality_warning_percentage = float(link_quality_warning_percentage)
+        self._net_count = NetCount(interface)
+
+    def _update_with_iwconfig_status(self, stat):
+        iwconfig_dict, link_quality = get_iwconfig_dict_and_link_quality(self._interface)
+
+        if link_quality is None:
+            stat.summary(DiagnosticStatus.OK, "Link quality unknown")
+        elif link_quality > self._link_quality_warning_percentage:
+            stat.summary(DiagnosticStatus.OK, "Link quality OK")
+        else:
+            stat.summary(DiagnosticStatus.WARN, "Link quality low")
+
+        for k, v in iwconfig_dict.iteritems():
+            stat.add(k, v)
+
+    def _update_with_psutil_net_io_counter(self, stat):
+        for k, v in self._net_count.get_net_count_dict().items():
+            stat.add(k, v)
+
+    def run(self, stat):
+        if self._interface is None:
+            stat.summary(DiagnosticStatus.OK, "No wireless device")
+            return stat
+
+        try:
+            self._update_with_iwconfig_status(stat)
+            self._update_with_psutil_net_io_counter(stat)
+        except RuntimeError as e:
+            stat.summary(DiagnosticStatus.ERROR, "Failed to update wireless information: {}".format(e))
+
+        return stat
+
+
+def main():
+    rospy.init_node('wireless_monitor')
+
+    interface = None
+    try:
+        interface = get_wifi_ifname(rospy.get_param('~interface', None))
+    except Exception as e:
+        rospy.logerr(e)
+
+    updater = Updater()
+    updater.setHardwareID(str(interface))
+    updater.add(WirelessTask(
+        interface,
+        rospy.get_param("~link_quality_warning_percentage", 0.0)
+    ))
+
+    rate = rospy.Rate(rospy.get_param("~rate", 1))
+    while not rospy.is_shutdown():
+        updater.force_update()  # We want do determine the rate ourselves (not the internal rate of the updater)
+        rate.sleep()
+
+
+if __name__ == '__main__':
+    main()
