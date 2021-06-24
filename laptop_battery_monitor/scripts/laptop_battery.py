@@ -45,7 +45,6 @@ import math
 import rospy
 import socket
 import os  # to check path existence
-import exceptions
 
 from sensor_msgs.msg import BatteryState 
 from diagnostic_msgs.msg import DiagnosticStatus, DiagnosticArray, KeyValue
@@ -104,7 +103,7 @@ def _read_number(filename, default=0):
     try: 
         data = int(_read_string(filename))
         return data
-    except exceptions.ValueError:
+    except ValueError:
         return default
 
 def _check_battery_info(_battery_acpi_path):
@@ -276,7 +275,7 @@ class LaptopBatteryMonitor(object):
                 with self._mutex:
                     self._msg = msg
                     self._last_state_update = rospy.get_time()
-            except Exception, e:
+            except Exception as e:
                 rospy.logwarn('Battery : unable to check laptop battery state [%s]' % e)
                 rospy.signal_shutdown('Battery : unable to check laptop battery state [%s]' % e)
                 
