@@ -1,0 +1,3 @@
+<launch>
+  <node pkg="libsensors_monitor" type="libsensors_monitor" name="libsensors_monitor" output="screen" respawn="true" />
+</launch>
