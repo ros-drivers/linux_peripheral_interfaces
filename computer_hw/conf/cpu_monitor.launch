@@ -1,3 +1,8 @@
 <launch>
-  <node pkg="libsensors_monitor" type="libsensors_monitor" name="libsensors_monitor" output="screen" respawn="true" />
+  <node name="cpu_monitor" pkg="computer_hw" type="cpu_monitor.py"
+        args="--diag-hostname=my_machine" >
+    <param name="check_ipmi_tool" value="false" type="bool" />
+    <param name="enforce_clock_speed" value="false" type="bool" />
+    <param name="num_cores" value="-1" type="int" />
+  </node>
 </launch>

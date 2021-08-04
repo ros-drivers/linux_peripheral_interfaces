@@ -36,20 +36,14 @@
 
 from __future__ import division
 
-<<<<<<< HEAD:pr2_computer_monitor/src/pr2_computer_monitor/nvidia_smi_util.py
-PKG = 'pr2_computer_monitor'
-=======
-PKG = 'computer_hw'
->>>>>>> d60763b ([capability] Add computer_hw package that is previously called _pr2_computer_monitor):computer_hw/src/computer_monitor/nvidia_smi_util.py
-import roslib; roslib.load_manifest(PKG)
-
-import rospy
-
+from computer_status_msgs.msg import GPUStatus
 from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus, KeyValue
-from pr2_msgs.msg import GPUStatus
+from computer_status_msgs.msg import GPUStatus
 
-import subprocess
 import math
+import rospy
+import subprocess
+
 
 MAX_FAN_RPM = 4500
 

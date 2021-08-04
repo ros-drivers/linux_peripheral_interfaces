@@ -1,9 +1,5 @@
 <launch>
-<<<<<<< HEAD:pr2_computer_monitor/demo/cpu_monitor.launch
-  <node name="cpu_monitor" pkg="pr2_computer_monitor" type="cpu_monitor.py"
-=======
   <node name="cpu_monitor" pkg="computer_hw" type="cpu_monitor.py"
->>>>>>> d60763b ([capability] Add computer_hw package that is previously called _pr2_computer_monitor):computer_hw/demo/cpu_monitor.launch
         args="--diag-hostname=my_machine" >
     <param name="check_ipmi_tool" value="false" type="bool" />
     <param name="enforce_clock_speed" value="false" type="bool" />

@@ -40,9 +40,8 @@ from __future__ import with_statement
 from computer_status_msgs.msg import AccessPoint
 from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus, KeyValue
 import rospy
-
-import threading
 import sys
+import threading
 
 DIAG_NAME = 'Wifi Status (ddwrt)'
 WARN_TIME = 30

@@ -1,0 +1,6 @@
+<launch>
+  <!-- Sensors -->
+  <node pkg="libsensors_monitor" type="libsensors_monitor" name="libsensors_monitor" output="screen" respawn="true" />
+
+  <node pkg="computer_hw" type="nvidia_temp.py" name="nvidia_temperature_monitor" output="screen" respawn="true" />
+</launch>

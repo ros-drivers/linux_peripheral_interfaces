@@ -1,9 +1,5 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-<<<<<<< HEAD:pr2_computer_monitor/CHANGELOG.rst
-Changelog for package pr2_computer_monitor
-=======
 Changelog for package computer_hw
->>>>>>> d60763b ([capability] Add computer_hw package that is previously called _pr2_computer_monitor):computer_hw/CHANGELOG.rst
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 1.6.32 (2021-05-26)

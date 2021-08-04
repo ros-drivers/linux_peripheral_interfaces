@@ -35,12 +35,6 @@
 ##\author Kevin Watts
 
 from __future__ import with_statement
-import roslib
-<<<<<<< HEAD:pr2_computer_monitor/scripts/hd_monitor.py
-roslib.load_manifest('pr2_computer_monitor')
-=======
-roslib.load_manifest('computer_hw')
->>>>>>> d60763b ([capability] Add computer_hw package that is previously called _pr2_computer_monitor):computer_hw/scripts/hd_monitor.py
 
 import rospy
 

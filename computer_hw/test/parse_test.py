@@ -36,20 +36,11 @@
 
 from __future__ import with_statement
 
-<<<<<<< HEAD:pr2_computer_monitor/test/parse_test.py
-PKG = 'pr2_computer_monitor'
-=======
 PKG = 'computer_hw'
->>>>>>> d60763b ([capability] Add computer_hw package that is previously called _pr2_computer_monitor):computer_hw/test/parse_test.py
 
-import roslib; roslib.load_manifest(PKG)
 import unittest
 
-<<<<<<< HEAD:pr2_computer_monitor/test/parse_test.py
-import pr2_computer_monitor
-=======
 import computer_hw
->>>>>>> d60763b ([capability] Add computer_hw package that is previously called _pr2_computer_monitor):computer_hw/test/parse_test.py
 
 import os, sys
 
@@ -60,16 +51,6 @@ TEXT_HIGH_TEMP_PATH = 'test/sample_output/nvidia_smi_high_temp.txt'
 ##\brief Parses launch, tests.xml and configs.xml files in qualification
 class TestNominalParser(unittest.TestCase):
     def setUp(self):
-<<<<<<< HEAD:pr2_computer_monitor/test/parse_test.py
-        with open(os.path.join(roslib.packages.get_pkg_dir('pr2_computer_monitor'), TEXT_PATH), 'r') as f:
-            self.data = f.read()
-
-        with open(os.path.join(roslib.packages.get_pkg_dir('pr2_computer_monitor'), TEXT_HIGH_TEMP_PATH), 'r') as f:
-            self.high_temp_data = f.read()
-
-    def test_parse(self):
-        gpu_stat = pr2_computer_monitor.parse_smi_output(self.data)
-=======
         with open(os.path.join(roslib.packages.get_pkg_dir('computer_hw'), TEXT_PATH), 'r') as f:
             self.data = f.read()
 
@@ -78,7 +59,6 @@ class TestNominalParser(unittest.TestCase):
 
     def test_parse(self):
         gpu_stat = computer_hw.parse_smi_output(self.data)
->>>>>>> d60763b ([capability] Add computer_hw package that is previously called _pr2_computer_monitor):computer_hw/test/parse_test.py
         
         # Check valid
         self.assert_(self.data, "Unable to read sample output, no test to run")
@@ -93,20 +73,12 @@ class TestNominalParser(unittest.TestCase):
         self.assert_(gpu_stat.temperature > 40 and gpu_stat.temperature < 90, "Invalid temperature readings. Temperature: %d" % gpu_stat.temperature)
         self.assert_(gpu_stat.fan_speed > 0 and gpu_stat.fan_speed < 471, "Invalid fan speed readings. Fan Speed %f" % gpu_stat.fan_speed)
 
-<<<<<<< HEAD:pr2_computer_monitor/test/parse_test.py
-        diag_stat = pr2_computer_monitor.gpu_status_to_diag(gpu_stat)
-=======
         diag_stat = computer_hw.gpu_status_to_diag(gpu_stat)
->>>>>>> d60763b ([capability] Add computer_hw package that is previously called _pr2_computer_monitor):computer_hw/test/parse_test.py
         
         self.assert_(diag_stat.level == 0, "Diagnostics reports an error for nominal input. Message: %s" % diag_stat.message)
 
     def test_high_temp_parse(self):
-<<<<<<< HEAD:pr2_computer_monitor/test/parse_test.py
-        gpu_stat = pr2_computer_monitor.parse_smi_output(self.high_temp_data)
-=======
         gpu_stat = computer_hw.parse_smi_output(self.high_temp_data)
->>>>>>> d60763b ([capability] Add computer_hw package that is previously called _pr2_computer_monitor):computer_hw/test/parse_test.py
         
         # Check valid
         self.assert_(self.high_temp_data, "Unable to read sample output, no test to run")
@@ -121,29 +93,17 @@ class TestNominalParser(unittest.TestCase):
         self.assert_(gpu_stat.temperature > 90, "Invalid temperature readings. Temperature: %d" % gpu_stat.temperature)
         self.assert_(gpu_stat.fan_speed > 0 and gpu_stat.fan_speed < 471, "Invalid fan speed readings. Fan Speed %s" % gpu_stat.fan_speed)
 
-<<<<<<< HEAD:pr2_computer_monitor/test/parse_test.py
-        diag_stat = pr2_computer_monitor.gpu_status_to_diag(gpu_stat)
-=======
         diag_stat = computer_hw.gpu_status_to_diag(gpu_stat)
->>>>>>> d60763b ([capability] Add computer_hw package that is previously called _pr2_computer_monitor):computer_hw/test/parse_test.py
         
         self.assert_(diag_stat.level == 1, "Diagnostics didn't report warning for high temp input. Level %d, Message: %s" % (diag_stat.level, diag_stat.message))
 
 
     def test_empty_parse(self):
-<<<<<<< HEAD:pr2_computer_monitor/test/parse_test.py
-        gpu_stat = pr2_computer_monitor.parse_smi_output('')
-        
-        self.assert_(gpu_stat.temperature == 0, "Invalid temperature reading. Should be 0. Reading: %d" % gpu_stat.temperature)
-        
-        diag_stat = pr2_computer_monitor.gpu_status_to_diag(gpu_stat)
-=======
         gpu_stat = computer_hw.parse_smi_output('')
         
         self.assert_(gpu_stat.temperature == 0, "Invalid temperature reading. Should be 0. Reading: %d" % gpu_stat.temperature)
         
         diag_stat = computer_hw.gpu_status_to_diag(gpu_stat)
->>>>>>> d60763b ([capability] Add computer_hw package that is previously called _pr2_computer_monitor):computer_hw/test/parse_test.py
         
         self.assert_(diag_stat.level == 2, "Diagnostics didn't reports an error for empty input. Level: %d, Message: %s" % (diag_stat.level, diag_stat.message))
 
