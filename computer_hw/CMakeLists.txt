@@ -1,12 +1,12 @@
 # http://ros.org/doc/groovy/api/catkin/html/user_guide/supposed.html
 cmake_minimum_required(VERSION 2.8.3)
-project(pr2_computer_monitor)
+project(computer_hw)
 # Load catkin and all dependencies required for this package
 # TODO: remove all from COMPONENTS that are not catkin packages.
 find_package(catkin REQUIRED COMPONENTS roscpp std_msgs)
 
 if(CATKIN_ENABLE_TESTING)
-  #catkin_add_nosetests(test/parse_test.py)
+  catkin_add_nosetests(test/parse_test.py)
 endif()
 
 include_directories(include ${catkin_INCLUDE_DIRS})
@@ -18,14 +18,9 @@ catkin_package(
     LIBRARIES network_detector# TODO
 )
 
-
-install(DIRECTORY demo
-   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
-
-file(GLOB PYTHON_SCRIPTS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" 
-   "${CMAKE_CURRENT_SOURCE_DIR}/scripts/*")
-install(PROGRAMS ${PYTHON_SCRIPTS}
-   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+catkin_install_python(PROGRAMS
+  executables/cpu_monitor.py executables/hd_monitor.py executables/ntp_monitor.py executables/ntp_monitor.py executables/nvidia_temp.py executables/wifi_monitor.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 add_executable(network_detector src/network_detector.cpp)
 target_link_libraries(network_detector ${catkin_LIBRARIES})
@@ -35,5 +30,10 @@ install(TARGETS network_detector
    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+foreach(dir conf)
+   install(DIRECTORY ${dir}/
+      DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${dir})
+endforeach(dir)
 
 catkin_python_setup()

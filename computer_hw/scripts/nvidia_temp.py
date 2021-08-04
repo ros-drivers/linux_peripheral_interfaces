@@ -45,7 +45,11 @@ import rospy
 from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus
 from pr2_msgs.msg import GPUStatus
 
+<<<<<<< HEAD:pr2_computer_monitor/scripts/nvidia_temp.py
 import pr2_computer_monitor
+=======
+import computer_hw
+>>>>>>> d60763b ([capability] Add computer_hw package that is previously called _pr2_computer_monitor):computer_hw/scripts/nvidia_temp.py
 
 class NVidiaTempMonitor(object):
     def __init__(self):
@@ -56,10 +60,18 @@ class NVidiaTempMonitor(object):
         gpu_stat = GPUStatus()
         stat = DiagnosticStatus()
         try:
+<<<<<<< HEAD:pr2_computer_monitor/scripts/nvidia_temp.py
             card_out = pr2_computer_monitor.get_gpu_status()
             gpu_stat = pr2_computer_monitor.parse_smi_output(card_out)
             stat = pr2_computer_monitor.gpu_status_to_diag(gpu_stat)
         except Exception as e:
+=======
+            card_out = computer_hw.get_gpu_status()
+            gpu_stat = computer_hw.parse_smi_output(card_out)
+            stat = computer_hw.gpu_status_to_diag(gpu_stat)
+            rospy.loginfo("card_out: {}\ngpu_stat: {}\n".format(card_out, gpu_stat))
+        except Exception, e:
+>>>>>>> d60763b ([capability] Add computer_hw package that is previously called _pr2_computer_monitor):computer_hw/scripts/nvidia_temp.py
             import traceback
             rospy.logerr('Unable to process nVidia GPU data')
             rospy.logerr(traceback.format_exc())

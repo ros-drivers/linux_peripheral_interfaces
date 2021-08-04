@@ -37,17 +37,12 @@
 
 from __future__ import with_statement
 
-PKG = 'pr2_computer_monitor'
-import roslib
-roslib.load_manifest(PKG)
-
+from computer_status_msgs.msg import AccessPoint
+from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus, KeyValue
 import rospy
 
 import threading
 import sys
-
-from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus, KeyValue
-from pr2_msgs.msg import AccessPoint
 
 DIAG_NAME = 'Wifi Status (ddwrt)'
 WARN_TIME = 30

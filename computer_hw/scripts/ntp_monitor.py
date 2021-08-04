@@ -32,7 +32,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import roslib
+<<<<<<< HEAD:pr2_computer_monitor/scripts/ntp_monitor.py
 roslib.load_manifest('pr2_computer_monitor')
+=======
+roslib.load_manifest('computer_hw')
+>>>>>>> d60763b ([capability] Add computer_hw package that is previously called _pr2_computer_monitor):computer_hw/scripts/ntp_monitor.py
 
 from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus, KeyValue
 
