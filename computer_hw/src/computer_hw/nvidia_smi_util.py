@@ -126,10 +126,13 @@ def parse_smi_output(output):
     gpu_stat.display        = _find_val(output, 'Display')
     gpu_stat.driver_version = _find_val(output, 'Driver Version')
     
-    temp_str = _find_val(output, 'Temperature')
-    if temp_str:
-        temp, units = temp_str.split()
-        gpu_stat.temperature = int(temp)
+    TEMPERATURE_QUERIES = ["Temperature", "GPU Current Temp"]
+    for query in TEMPERATURE_QUERIES:
+        temp_str = _find_val(output, query)
+        if temp_str:
+            temp, units = temp_str.split()
+            gpu_stat.temperature = int(temp)
+            break
 
     fan_str = _find_val(output, 'Fan Speed')
     if fan_str:
