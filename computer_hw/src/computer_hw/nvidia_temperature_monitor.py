@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-#
 # Software License Agreement (BSD License)
 #
 # Copyright (c) 2010, Willow Garage, Inc.
@@ -32,20 +30,37 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-##\author Kevin Watts
-##\brief Publishes diagnostic data on temperature and usage for a Quadro 600 GPU
-
-from __future__ import with_statement, division
-
+from computer_status_msgs.msg import GPUStatus
+from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus
 import rospy
 
-from computer_hw.nvidia_temperature_monitor import NVidiaTempMonitor
+from computer_hw.nvidia_smi_util import get_gpu_status, parse_smi_output, gpu_status_to_diag
 
-if __name__ == '__main__':
-    rospy.init_node('nvidia_temp_monitor')
-    
-    monitor = NVidiaTempMonitor()
-    my_rate = rospy.Rate(1.0)
-    while not rospy.is_shutdown():
-        monitor.pub_status()
-        my_rate.sleep()
+
+class NVidiaTempMonitor(object):
+    def __init__(self):
+        self._pub = rospy.Publisher('/diagnostics', DiagnosticArray, queue_size=10)
+        self._gpu_pub = rospy.Publisher('gpu_status', GPUStatus, queue_size=10)
+
+    def pub_status(self):
+        gpu_stat = GPUStatus()
+        stat = DiagnosticStatus()
+        try:
+            card_out = get_gpu_status()
+            gpu_stat = parse_smi_output(card_out)
+            stat = gpu_status_to_diag(gpu_stat)
+            rospy.loginfo("card_out: {}\ngpu_stat: {}\n".format(card_out, gpu_stat))
+        except Exception, e:
+            import traceback
+            rospy.logerr('Unable to process nVidia GPU data')
+            rospy.logerr(traceback.format_exc())
+
+        gpu_stat.header.stamp = rospy.get_rostime()
+
+        array = DiagnosticArray()
+        array.header.stamp = rospy.get_rostime()
+
+        array.status = [ stat ]
+
+        self._pub.publish(array)
+        self._gpu_pub.publish(gpu_stat)
