@@ -44,7 +44,7 @@ import computer_hw
 
 import os, sys
 
-TEXT_PATH = 'test/sample_output/nvidia_smi_out.txt'
+TEXT_PATH = 'test/sample_output/nvidia_smi_out_2021.txt'
 TEXT_HIGH_TEMP_PATH = 'test/sample_output/nvidia_smi_high_temp.txt'
 
 
