@@ -152,9 +152,21 @@ def parse_smi_output(output):
         gpu_stat.memory_usage = int(mem)
 
     return gpu_stat
-        
+
 def get_gpu_status():
-    p = subprocess.Popen('sudo nvidia-smi -a', stdout = subprocess.PIPE, 
+    """
+    @summary: Relying on a command on the host 'nvidia-smi'. 
+
+        Regarding 'nvidia-smi', some people believe that it at least needs to be run by 'root'
+        for the first invocation https://serverfault.com/questions/975859/nvidia-smi-must-be-run-by-root-before-it-can-be-used-by-regular-users,
+        but it seems to be working without initial invocation.
+    @todo: OpenQuetion-1: When this method is invoked from a container where
+         nvidia-smi, which is typically available on a host, is not easily
+         available. -> For docker, passing '--runtime=nvidia' enables the cmd
+         from a container. Then show warning when unavailable.
+    @todo: OpenQuetion-2: What if the cmd 'nvidia-smi' is not available?
+    """
+    p = subprocess.Popen('nvidia-smi -a', stdout = subprocess.PIPE, 
                          stderr = subprocess.PIPE, shell = True)
     (o, e) = p.communicate()
 
