@@ -32,19 +32,33 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-##\author Kevin Watts
-##\brief Publishes diagnostic data on temperature and usage for a Quadro 600 GPU
+import logging
+import subprocess
 
-from __future__ import with_statement, division
+from computer_hw.gpu_util import GPUStatusHandler
 
-import rospy
 
-from computer_hw.gpu_status_monitor import GpuMonitor
-from computer_hw.nvidia_util import Nvidia_GPU_Stat
+class Nvidia_GPU_Stat(GPUStatusHandler):
+    def get_raw_gpu_status(self):
+        """
+        @summary: Relying on a command on the host 'nvidia-smi'.
 
-if __name__ == '__main__':
-    rospy.init_node('nvidia_temp_monitor')
-    
-    monitor = GpuMonitor(Nvidia_GPU_Stat)
-    monitor.run()
+            Regarding 'nvidia-smi', some people believe that it at least needs to be run by 'root'
+            for the first invocation https://serverfault.com/questions/975859/nvidia-smi-must-be-run-by-root-before-it-can-be-used-by-regular-users,
+            but it seems to be working without initial invocation.
+        @todo: OpenQuetion-1: When this method is invoked from a container where
+             nvidia-smi, which is typically available on a host, is not easily
+             available. -> For docker, passing '--runtime=nvidia' enables the cmd
+             from a container. Then show warning when unavailable.
+        @todo: OpenQuetion-2: What if the cmd 'nvidia-smi' is not available?
+        """
+        p = subprocess.Popen('nvidia-smi -a', stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE, shell=True)
+        (o, e) = p.communicate()
 
+        if not p.returncode == 0:
+            return ''
+
+        if not o: return ''
+        logging.debug("card_out: {}".format(o))
+        return o

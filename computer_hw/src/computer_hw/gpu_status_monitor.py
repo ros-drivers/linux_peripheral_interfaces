@@ -33,16 +33,27 @@
 from computer_status_msgs.msg import GPUStatus
 from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus, KeyValue
 import rospy
+import traceback
 
-from computer_hw.gpu_util import Nvidia_GPU_Stat
+from computer_hw.gpu_util import GPUStatusHandler
 
 
-class NVidiaTempMonitor(object):
-    def __init__(self):
+class GpuMonitor(object):
+    def __init__(self, stat_handler_class):
+        """
+        @param stat_handler_class: Class object that is to be delgated to return
+            GPU status. E.g. computer_hw.nvidia_util.Nvidia_GPU_Stat
+        @type stat_handler_class: computer_hw.gpu_util.GPUStatusHandler
+        """
+        # Instantiating GPU status handler.
+        self._gpu_status_handler = stat_handler_class()
+        if not isinstance(self._gpu_status_handler, GPUStatusHandler):
+            raise TypeError("GPU status handler passed '{}' is not compatible. This class needs a derived class of {}".format(
+                stat_handler_class, GPUStatusHandler))
         self._pub = rospy.Publisher('/diagnostics', DiagnosticArray, queue_size=10)
         self._gpu_pub = rospy.Publisher('gpu_status', GPUStatus, queue_size=10)
 
-    def gpu_status_to_diag(gpu_stat):
+    def gpu_status_to_diag(self, gpu_stat):
         stat = DiagnosticStatus()
         stat.name = 'GPU Status'
         stat.message = 'OK'
@@ -55,10 +66,10 @@ class NVidiaTempMonitor(object):
         stat.values.append(KeyValue(key='Display',              value = gpu_stat.display))
         stat.values.append(KeyValue(key='Driver Version',       value = gpu_stat.driver_version))
         stat.values.append(KeyValue(key='Temperature (C)',      value = '%.0f' % gpu_stat.temperature))
-        stat.values.append(KeyValue(key='Fan Speed (RPM)',      value = '%.0f' % _rads_to_rpm(gpu_stat.fan_speed)))
+        stat.values.append(KeyValue(key='Fan Speed (RPM)',      value = '%.0f' % GPUStatusHandler.rads_to_rpm(gpu_stat.fan_speed)))
         stat.values.append(KeyValue(key='Usage (%)',            value = '%.0f' % gpu_stat.gpu_usage))
         stat.values.append(KeyValue(key='Memory (%)',           value = '%.0f' % gpu_stat.memory_usage))
-    
+
         # Check for valid data
         if not gpu_stat.product_name or not gpu_stat.pci_device_id:
             stat.level = DiagnosticStatus.ERROR
@@ -77,7 +88,7 @@ class NVidiaTempMonitor(object):
         if gpu_stat.temperature > 95:
             stat.level = max(stat.level, DiagnosticStatus.ERROR)
             stat.message = 'Temperature Alarm'
-    
+
         # Check fan
         if gpu_stat.fan_speed == 0:
             stat.level = max(stat.level, DiagnosticStatus.ERROR)
@@ -85,16 +96,17 @@ class NVidiaTempMonitor(object):
         return stat
 
     def pub_status(self):
-        gpu_stat = GPUStatus()
         stat = DiagnosticStatus()
+        gpu_stat = None
         try:
-            card_out = get_gpu_status()
-            gpu_stat = parse_smi_output(card_out)
-            stat = gpu_status_to_diag(gpu_stat)
-            rospy.loginfo("card_out: {}\ngpu_stat: {}\n".format(card_out, gpu_stat))
+            _non_ros_gpu_stat = self._gpu_status_handler.get_gpu_status()
+            gpu_stat = self._convert_output(_non_ros_gpu_stat)
+            stat = self.gpu_status_to_diag(gpu_stat)
+            rospy.loginfo("gpu_stat: {}\n".format(gpu_stat))
+        except AttributeError as e:
+            rospy.logerr('Unable to process GPU status as getting GPU status with proprietary command failed : {}'.format(str(e)))
         except Exception as e:
-            import traceback
-            rospy.logerr('Unable to process nVidia GPU data')
+            rospy.logerr('Unable to process GPU status: {}'.format(str(e)))
             rospy.logerr(traceback.format_exc())
 
         gpu_stat.header.stamp = rospy.get_rostime()
@@ -107,40 +119,25 @@ class NVidiaTempMonitor(object):
         self._pub.publish(array)
         self._gpu_pub.publish(gpu_stat)
 
+    def _convert_output(self, gpu_stat_proprietary):
+        """
+        @param gpu_stat_proprietary: 
+        @rtype computer_status_msgs.GPUStatus
+        """
+        gpu_stat = GPUStatus()
+        gpu_stat.product_name   = gpu_stat_proprietary.product_name
+        gpu_stat.pci_device_id  = gpu_stat_proprietary.pci_device_id
+        gpu_stat.pci_location   = gpu_stat_proprietary.pci_location
+        gpu_stat.display        = gpu_stat_proprietary.display
+        gpu_stat.driver_version = gpu_stat_proprietary.driver_version
+        gpu_stat.temperature = gpu_stat_proprietary.temperature
+        gpu_stat.fan_speed = gpu_stat_proprietary.fan_speed
+        gpu_stat.gpu_usage = gpu_stat_proprietary.gpu_usage
+        gpu_stat.memory_usage = gpu_stat_proprietary.memory_usage
+        return gpu_stat
 
-def parse_smi_output(output):
-    gpu_stat = GPUStatus()
-
-    gpu_stat.product_name   = _find_val(output, 'Product Name')
-    gpu_stat.pci_device_id  = _find_val(output, 'PCI Device/Vendor ID')
-    gpu_stat.pci_location   = _find_val(output, 'PCI Location ID')
-    gpu_stat.display        = _find_val(output, 'Display')
-    gpu_stat.driver_version = _find_val(output, 'Driver Version')
-
-    TEMPERATURE_QUERIES = ["Temperature", "GPU Current Temp"]
-    for query in TEMPERATURE_QUERIES:
-        temp_str = _find_val(output, query)
-        if temp_str:
-            temp, units = temp_str.split()
-            gpu_stat.temperature = int(temp)
-            break
-
-    fan_str = _find_val(output, 'Fan Speed')
-    if fan_str:
-        # Fan speed in RPM
-        fan_spd = float(fan_str.strip('\%').strip()) * 0.01 * MAX_FAN_RPM
-        # Convert fan speed to Hz
-        gpu_stat.fan_speed = _rpm_to_rads(fan_spd)
-
-    usage_str = _find_val(output, 'GPU')
-    if usage_str:
-        usage = usage_str.strip('\%').strip()
-        gpu_stat.gpu_usage = int(usage)
-        
-    mem_str = _find_val(output, 'Memory')
-    if mem_str:
-        mem = mem_str.strip('\%').strip()
-        gpu_stat.memory_usage = int(mem)
-
-    return gpu_stat
-
+    def run(self):
+        my_rate = rospy.Rate(rospy.get_param("gpu_monitor_rate", 1.0))
+        while not rospy.is_shutdown():
+            self.pub_status()
+            my_rate.sleep()
