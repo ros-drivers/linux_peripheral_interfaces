@@ -102,7 +102,7 @@ class GpuMonitor(object):
             _non_ros_gpu_stat = self._gpu_status_handler.get_gpu_status()
             gpu_stat = self._convert_output(_non_ros_gpu_stat)
             stat = self.gpu_status_to_diag(gpu_stat)
-            rospy.loginfo("gpu_stat: {}\n".format(gpu_stat))
+            rospy.logdebug("gpu_stat: {}\n".format(gpu_stat))
         except AttributeError as e:
             rospy.logerr('Unable to process GPU status as getting GPU status with proprietary command failed : {}'.format(str(e)))
         except Exception as e:
