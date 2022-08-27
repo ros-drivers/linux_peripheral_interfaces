@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>linux_peripheral_interfaces</name>
-  <version>0.2.1</version>
+  <version>0.2.2</version>
   <description>
      Simple scripts which help utilise, monitor, interact with computer
      hardware abstracted by a linux OS.

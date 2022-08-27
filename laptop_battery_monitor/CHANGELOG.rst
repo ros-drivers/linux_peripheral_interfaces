@@ -2,8 +2,8 @@
 Changelog for package laptop_battery_monitor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.2 (2022-08-27)
+------------------
 * Support Python3 for noetic (`#19 <https://github.com/ros-drivers/linux_peripheral_interfaces/issues/19>`_)
     These changes allow the node to work with noetic, ubuntu 20.04, with python3
 
