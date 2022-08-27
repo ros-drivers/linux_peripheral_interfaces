@@ -2,6 +2,9 @@
 Changelog for package linux_peripheral_interfaces
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.2.1 (2019-11-16)
 ------------------
 * Merge branch 'kinetic' into add_batt_diag
