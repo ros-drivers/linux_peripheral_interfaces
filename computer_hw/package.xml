@@ -21,5 +21,6 @@
   <exec_depend>diagnostic_aggregator</exec_depend>
   <exec_depend>libsensors_monitor</exec_depend>
   <exec_depend>rospy</exec_depend>
+  <test_depend>roslib</test_depend>
 
 </package>

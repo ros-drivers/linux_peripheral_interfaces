@@ -34,7 +34,7 @@ from computer_status_msgs.msg import GPUStatus
 from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus, KeyValue
 import rospy
 
-from computer_hw.gpu_util import Nvidia_GPU_Stat
+from computer_hw.gpu_util import GPUStatusHandler
 
 
 class NVidiaTempMonitor(object):
@@ -55,7 +55,7 @@ class NVidiaTempMonitor(object):
         stat.values.append(KeyValue(key='Display',              value = gpu_stat.display))
         stat.values.append(KeyValue(key='Driver Version',       value = gpu_stat.driver_version))
         stat.values.append(KeyValue(key='Temperature (C)',      value = '%.0f' % gpu_stat.temperature))
-        stat.values.append(KeyValue(key='Fan Speed (RPM)',      value = '%.0f' % _rads_to_rpm(gpu_stat.fan_speed)))
+        stat.values.append(KeyValue(key='Fan Speed (RPM)',      value = '%.0f' % GPUStatusHandler.rads_to_rpm(gpu_stat.fan_speed)))
         stat.values.append(KeyValue(key='Usage (%)',            value = '%.0f' % gpu_stat.gpu_usage))
         stat.values.append(KeyValue(key='Memory (%)',           value = '%.0f' % gpu_stat.memory_usage))
     
@@ -111,33 +111,33 @@ class NVidiaTempMonitor(object):
 def parse_smi_output(output):
     gpu_stat = GPUStatus()
 
-    gpu_stat.product_name   = _find_val(output, 'Product Name')
-    gpu_stat.pci_device_id  = _find_val(output, 'PCI Device/Vendor ID')
-    gpu_stat.pci_location   = _find_val(output, 'PCI Location ID')
-    gpu_stat.display        = _find_val(output, 'Display')
-    gpu_stat.driver_version = _find_val(output, 'Driver Version')
+    gpu_stat.product_name   = GPUStatusHandler._find_val(output, 'Product Name')
+    gpu_stat.pci_device_id  = GPUStatusHandler._find_val(output, 'PCI Device/Vendor ID')
+    gpu_stat.pci_location   = GPUStatusHandler._find_val(output, 'PCI Location ID')
+    gpu_stat.display        = GPUStatusHandler._find_val(output, 'Display')
+    gpu_stat.driver_version = GPUStatusHandler._find_val(output, 'Driver Version')
 
     TEMPERATURE_QUERIES = ["Temperature", "GPU Current Temp"]
     for query in TEMPERATURE_QUERIES:
-        temp_str = _find_val(output, query)
+        temp_str = GPUStatusHandler._find_val(output, query)
         if temp_str:
-            temp, units = temp_str.split()
+            temp = temp_str.split()[0]
             gpu_stat.temperature = int(temp)
             break
 
-    fan_str = _find_val(output, 'Fan Speed')
+    fan_str = GPUStatusHandler._find_val(output, 'Fan Speed')
     if fan_str:
         # Fan speed in RPM
-        fan_spd = float(fan_str.strip('\%').strip()) * 0.01 * MAX_FAN_RPM
+        fan_spd = float(fan_str.strip('\%').strip()) * 0.01 * GPUStatusHandler._MAX_FAN_RPM
         # Convert fan speed to Hz
-        gpu_stat.fan_speed = _rpm_to_rads(fan_spd)
+        gpu_stat.fan_speed = GPUStatusHandler.rpm_to_rads(fan_spd)
 
-    usage_str = _find_val(output, 'GPU')
+    usage_str = GPUStatusHandler._find_val(output, 'GPU')
     if usage_str:
         usage = usage_str.strip('\%').strip()
         gpu_stat.gpu_usage = int(usage)
         
-    mem_str = _find_val(output, 'Memory')
+    mem_str = GPUStatusHandler._find_val(output, 'Memory')
     if mem_str:
         mem = mem_str.strip('\%').strip()
         gpu_stat.memory_usage = int(mem)

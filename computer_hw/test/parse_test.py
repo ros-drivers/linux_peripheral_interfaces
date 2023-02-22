@@ -42,7 +42,10 @@ import os
 import sys
 import unittest
 
+import roslib
+
 import computer_hw
+from computer_hw.nvidia_temperature_monitor import NVidiaTempMonitor, parse_smi_output
 
 TEXT_PATH = 'test/sample_output/nvidia_smi_out_2021.txt'
 TEXT_HIGH_TEMP_PATH = 'test/sample_output/nvidia_smi_high_temp.txt'
@@ -58,7 +61,7 @@ class TestNominalParser(unittest.TestCase):
             self.high_temp_data = f.read()
 
     def test_parse(self):
-        gpu_stat = computer_hw.parse_smi_output(self.data)
+        gpu_stat = parse_smi_output(self.data)
         
         # Check valid
         self.assert_(self.data, "Unable to read sample output, no test to run")
@@ -73,12 +76,12 @@ class TestNominalParser(unittest.TestCase):
         self.assert_(gpu_stat.temperature > 40 and gpu_stat.temperature < 90, "Invalid temperature readings. Temperature: %d" % gpu_stat.temperature)
         self.assert_(gpu_stat.fan_speed > 0 and gpu_stat.fan_speed < 471, "Invalid fan speed readings. Fan Speed %f" % gpu_stat.fan_speed)
 
-        diag_stat = computer_hw.gpu_status_to_diag(gpu_stat)
+        diag_stat = NVidiaTempMonitor.gpu_status_to_diag(gpu_stat)
         
         self.assert_(diag_stat.level == 0, "Diagnostics reports an error for nominal input. Message: %s" % diag_stat.message)
 
     def test_high_temp_parse(self):
-        gpu_stat = computer_hw.parse_smi_output(self.high_temp_data)
+        gpu_stat = parse_smi_output(self.high_temp_data)
         
         # Check valid
         self.assert_(self.high_temp_data, "Unable to read sample output, no test to run")
@@ -93,17 +96,17 @@ class TestNominalParser(unittest.TestCase):
         self.assert_(gpu_stat.temperature > 90, "Invalid temperature readings. Temperature: %d" % gpu_stat.temperature)
         self.assert_(gpu_stat.fan_speed > 0 and gpu_stat.fan_speed < 471, "Invalid fan speed readings. Fan Speed %s" % gpu_stat.fan_speed)
 
-        diag_stat = computer_hw.gpu_status_to_diag(gpu_stat)
+        diag_stat = NVidiaTempMonitor.gpu_status_to_diag(gpu_stat)
         
         self.assert_(diag_stat.level == 1, "Diagnostics didn't report warning for high temp input. Level %d, Message: %s" % (diag_stat.level, diag_stat.message))
 
 
     def test_empty_parse(self):
-        gpu_stat = computer_hw.parse_smi_output('')
+        gpu_stat = parse_smi_output('')
         
         self.assert_(gpu_stat.temperature == 0, "Invalid temperature reading. Should be 0. Reading: %d" % gpu_stat.temperature)
         
-        diag_stat = computer_hw.gpu_status_to_diag(gpu_stat)
+        diag_stat = NVidiaTempMonitor.gpu_status_to_diag(gpu_stat)
         
         self.assert_(diag_stat.level == 2, "Diagnostics didn't reports an error for empty input. Level: %d, Message: %s" % (diag_stat.level, diag_stat.message))
 
