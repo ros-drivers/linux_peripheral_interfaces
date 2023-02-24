@@ -1,0 +1,26 @@
+<package format="3">
+  <name>computer_hw</name>
+  <version>1.6.31</version>
+  <description>Monitors the computer's processor and hard drives of the PR2 and publishes data to diagnostics. Originally taken from <a href="https://github.com/PR2/pr2_robot">pr2_robot</a> repo.</description>
+  <maintainer email="ros-orphaned-packages@googlegroups.com">ROS Orphaned Package Maintainers</maintainer>
+  <maintainer email="gm130s@gmail.com">Isaac I.Y. Saito</maintainer>
+  <license>BSD</license>
+
+  <url type="website">http://www.ros.org/wiki/computer_hw</url>
+  <url type="bugtracker">https://github.com/130s/computer_hw/issues</url>
+
+  <author email="watts@willowgarage.com">Kevin Watts</author>
+  <author email="isaac.saito@plusonerobotics.com">Isaac Saito</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>diagnostic_msgs</depend>
+  <depend>computer_status_msgs</depend>
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <exec_depend>diagnostic_aggregator</exec_depend>
+  <exec_depend>libsensors_monitor</exec_depend>
+  <exec_depend>rospy</exec_depend>
+  <test_depend>roslib</test_depend>
+
+</package>

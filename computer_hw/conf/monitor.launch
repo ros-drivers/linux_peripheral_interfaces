@@ -1,0 +1,17 @@
+<launch>
+  <arg name="gpu_monitor_rate" default="1.0" />
+  <arg name="gpu_stats_window_max" default="172800" doc="ROS Topic's statistics feature. Default '172800' is 48 hours for 1 hz" />
+
+  <!-- Sensors -->
+  <node pkg="libsensors_monitor" type="libsensors_monitor" name="libsensors_monitor" output="screen" respawn="true" />
+
+  <node pkg="computer_hw" type="nvidia_temp.py" name="nvidia_temperature_monitor" output="screen" respawn="true">
+    <param name="enable_statistics" value="true" />
+    <param name="statistics_window_max_elements" value="$(arg gpu_stats_window_max)" />
+    <param name="gpu_monitor_rate" value="$(arg gpu_monitor_rate)" />
+  </node>
+
+  <!-- Enable ROS' diagnostics aggregation feature -->
+  <node pkg="diagnostic_aggregator" type="aggregator_node"  name="diag_agg" />
+
+</launch>
